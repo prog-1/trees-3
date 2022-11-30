@@ -1,5 +1,7 @@
 package main
 
+//https://codeforces.com/contest/580/submission/183405832
+
 import (
 	"bufio"
 	"fmt"
@@ -9,9 +11,8 @@ import (
 type node struct {
 	cat       int
 	neighbors []*node
+	// prev      *node
 }
-
-//Doesnt work with trees that haveonly reversed pathes like test 8 on codeforce
 
 func collectData() (*node, int) {
 	r := bufio.NewReader(os.Stdin)
@@ -25,24 +26,19 @@ func collectData() (*node, int) {
 	for i := 0; i < n-1; i++ {
 		var a, b int
 		fmt.Fscan(r, &a, &b)
-		if b < a {
-			continue
-		}
 		nodes[a-1].neighbors = append(nodes[a-1].neighbors, &nodes[b-1])
-
-	}
-	if len(nodes) < n {
-		fmt.Println(0)
+		nodes[b-1].neighbors = append(nodes[b-1].neighbors, &nodes[a-1])
+		// if a > b {
+		// 	nodes[a-1].prev = &nodes[b-1]
+		// } else {
+		// 	nodes[b-1].prev = &nodes[a-1]
+		// }
 	}
 	return &nodes[0], m
 }
 func roots(root *node, m int) int {
-	var visit func(root *node, catcnt int, ways, m int, cnt *int) int
-	visit = func(root *node, catcnt int, ways, m int, cnt *int) int {
-		if root == nil {
-			return 0
-		}
-
+	var visit func(root, prev *node, catcnt int, ways, m int) int
+	visit = func(root, prev *node, catcnt int, ways, m int) int {
 		if root.cat == 0 {
 			catcnt = 0
 		} else {
@@ -51,20 +47,21 @@ func roots(root *node, m int) int {
 				return ways
 			}
 		}
-		if len(root.neighbors) == 0 && *cnt > 0 {
+		if len(root.neighbors) == 1 && prev != nil {
 			return ways + 1
 		}
-		*cnt++
 		for _, v := range root.neighbors {
-			ways = visit(v, catcnt, ways, m, cnt)
+			if v != prev {
+				ways = visit(v, root, catcnt, ways, m)
+			}
 		}
 		return ways
 	}
-	var cnt int
-	return visit(root, 0, 0, m, &cnt)
+	return visit(root, nil, 0, 0, m)
 
 }
 func main() {
 	n, m := collectData()
 	fmt.Println(roots(n, m))
+
 }
