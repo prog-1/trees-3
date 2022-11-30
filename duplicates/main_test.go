@@ -50,9 +50,7 @@ func TestLevelMax(t *testing.T) {
 		{"large duplicates", &node{val: 1, left: &node{val: 3, left: &node{val: 1}, right: &node{val: 3}}, right: &node{val: 3, left: &node{val: 3}, right: &node{val: 7}}}, []int{1, 3, 7}},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			var got []int
-			levelMax(tc.input)
-			if !reflect.DeepEqual(got, tc.want) {
+			if got := levelMax(tc.input, 0, nil); !reflect.DeepEqual(got, tc.want) {
 				t.Errorf("Test: %v, got = %v, want = %v", tc.name, got, tc.want)
 			}
 		})
