@@ -4,7 +4,7 @@
 
 https://codeforces.com/problemset/problem/580/C
 
-Just a reference to your solution in the PR
+Just reference to your solution in the PR
 
 ## 2. Duplicates
 
