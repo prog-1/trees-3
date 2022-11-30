@@ -14,7 +14,7 @@ Create a function that verifies whether there are duplicate elements in a binary
 
 Create a function that finds max element on each tree level.
 
-## Ingus koeficients
+## 4. (optional) Ingus koeficients
 
 Ingus koeficients problem as described here https://lio.lv/arhivs/arhivs2/2019_3_d1_uzd.pdf
 
