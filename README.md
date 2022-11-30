@@ -4,7 +4,11 @@
 
 https://codeforces.com/problemset/problem/580/C
 
-Just reference your solution in the PR
+Just reference your solution in the PR.
+
+> **Note**
+>
+> You need n-trees in this problem (trees that have an arbitraty number of children).
 
 ## 2. Duplicates
 
@@ -12,7 +16,7 @@ Create a function that verifies whether there are duplicate elements in a binary
 
 ## 3. Level Max
 
-Create a function that finds max element on each tree level.
+Create a function that finds max element on each tree level of a binary tree.
 
 ## 4. (optional) Ingus koeficients
 
