@@ -21,9 +21,10 @@ Create a function that finds max element on each tree level of a binary tree.
 The function should return a slice, which contains max elements on each level. Slice
 indices should be treated as corresponding levels (level 0 corresponds to the tree root).
 
-Example:
+### Examples
 
 ```
+Example 1:
      5
    /   \
   2     7
@@ -31,8 +32,15 @@ Example:
 1   3       9
            /
           8
-          
 Returns [5 7 9 8]
+
+Example 2:
+     5
+   /   \
+  2     7
+ / \
+1   3
+Returns [5 7 3]
 ```
 
 
