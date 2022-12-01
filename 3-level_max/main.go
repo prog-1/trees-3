@@ -8,21 +8,20 @@ type node struct {
 }
 
 func MaxLevelElements(t *node) []int {
-	return FindMax(t, []int{}, 1)
+	return FindMax(t, []int{}, 0)
 }
 
 func FindMax(t *node, max []int, level int) []int { // using preorder traversal
 	if t == nil {
 		return max
 	}
-	if len(max) < level {
+	if len(max) < level+1 {
 		max = append(max, t.val)
-	} else if max[level-1] < t.val {
-		max[level-1] = t.val
+	} else if max[level] < t.val {
+		max[level] = t.val
 	}
 	max = FindMax(t.left, max, level+1)
-	max = FindMax(t.right, max, level+1)
-	return max
+	return FindMax(t.right, max, level+1)
 }
 
 func main() {
