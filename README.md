@@ -54,7 +54,7 @@ Create a program that uses BST to count words in a file.
 
 [standard split implementation]: https://cs.opensource.google/go/go/+/refs/tags/go1.19.3:src/strings/strings.go;l=236;drc=e7c56fe9948449a3710b36c22c02d57c215d1c10
 
-[unicode.Letter]: https://pkg.go.dev/unicode#IsLetter
+[unicode.IsLetter]: https://pkg.go.dev/unicode#IsLetter
 
 ## 5. Ingus koeficients
 
