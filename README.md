@@ -43,8 +43,20 @@ Example 2:
 Returns [5 7 3]
 ```
 
+## 4. Count Words
 
-## 4. (optional) Ingus koeficients
+Create a program that uses BST to count words in a file.
+
+> **Note**
+>
+> Use custom split function. You can get inspired by the [standard split implementation].
+> And feel free to treat every rune for which [unicode.IsLetter] returns $false$ as a separator.
+
+[standard split implementation]: https://cs.opensource.google/go/go/+/refs/tags/go1.19.3:src/strings/strings.go;l=236;drc=e7c56fe9948449a3710b36c22c02d57c215d1c10
+
+[unicode.IsLetter]: https://pkg.go.dev/unicode#IsLetter
+
+## 5. Ingus koeficients
 
 Ingus koeficients problem as described here https://lio.lv/arhivs/arhivs2/2019_3_d1_uzd.pdf
 
