@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"unicode"
 )
 
 type bt struct {
@@ -86,12 +87,23 @@ type bst struct {
 }
 
 func countWords(scanner *bufio.Scanner) *bst {
-	scanner.Split(bufio.ScanWords)
 	var root *bst
-	for scanner.Scan() {
-		insert(&root, string(scanner.Text()))
-	}
+	getWords(scanner, func(word string) { insert(&root, word) })
 	return root
+}
+
+func getWords(scanner *bufio.Scanner, sink func(word string)) {
+	scanner.Split(bufio.ScanRunes)
+	var word string
+	for scanner.Scan() {
+		letter := rune(scanner.Text()[0])
+		if !unicode.IsLetter(letter) {
+			sink(word)
+			word = ""
+		} else {
+			word += string(letter)
+		}
+	}
 }
 
 func insert(root **bst, in string) {
