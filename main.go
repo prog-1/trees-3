@@ -1,29 +1,32 @@
 package main
 
-import "fmt"
+import (
+	"bufio"
+	"fmt"
+	"log"
+	"os"
+)
 
-type node struct {
+type bt struct {
 	val         int
-	left, right *node
+	left, right *bt
 }
 
-func n(v int) *node                { return &node{v, nil, nil} }
-func (root *node) l(n *node) *node { root.left = n; return root }
-func (root *node) r(n *node) *node { root.right = n; return root }
+func nbt(v int) *bt          { return &bt{v, nil, nil} }
+func (root *bt) l(n *bt) *bt { root.left = n; return root }
+func (root *bt) r(n *bt) *bt { root.right = n; return root }
 
 func main() {
-	root := n(10).
-		l(n(2).
-			l(n(1)).
-			r(n(9))).
-		r(n(5).
-			l(n(1)).
-			r(n(8)))
-
-	fmt.Println(levelMax(root))
+	f, err := os.Open("main.go")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+	scanner := bufio.NewScanner(f)
+	print(countWords(scanner))
 }
 
-func hasDublicates(root *node) bool {
+func hasDublicates(root *bt) bool {
 	contains := func(s []int, val int) bool {
 		for _, el := range s {
 			if el == val {
@@ -33,8 +36,8 @@ func hasDublicates(root *node) bool {
 		return false
 	}
 	var values []int
-	var hd func(*node) bool
-	hd = func(r *node) bool {
+	var hd func(*bt) bool
+	hd = func(r *bt) bool {
 		if r == nil {
 			return false
 		}
@@ -47,10 +50,10 @@ func hasDublicates(root *node) bool {
 	return hd(root)
 }
 
-func levelMax(root *node) []int {
+func levelMax(root *bt) []int {
 	var values [][]int
-	var traverse func(*node, int)
-	traverse = func(root *node, lvl int) {
+	var traverse func(*bt, int)
+	traverse = func(root *bt, lvl int) {
 		if root == nil {
 			return
 		}
@@ -74,4 +77,40 @@ func levelMax(root *node) []int {
 	}
 
 	return lm
+}
+
+type bst struct {
+	val         string
+	count       int
+	right, left *bst
+}
+
+func countWords(scanner *bufio.Scanner) *bst {
+	scanner.Split(bufio.ScanWords)
+	var root *bst
+	for scanner.Scan() {
+		insert(&root, string(scanner.Text()))
+	}
+	return root
+}
+
+func insert(root **bst, in string) {
+	if (*root) == nil {
+		*root = &bst{in, 1, nil, nil}
+	} else if in == (*root).val {
+		(*root).count++
+	} else if in < (*root).val {
+		insert(&(*root).left, in)
+	} else /*in > root.val*/ {
+		insert(&(*root).right, in)
+	}
+}
+
+func print(root *bst) {
+	if root == nil {
+		return
+	}
+	print(root.left)
+	fmt.Println(root.val, ":", root.count)
+	print(root.right)
 }

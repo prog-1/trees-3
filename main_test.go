@@ -1,23 +1,25 @@
 package main
 
-import "testing"
-import "reflect"
+import (
+	"reflect"
+	"testing"
+)
 
 func TestDublicates(t *testing.T) {
 	type testCase struct {
 		name    string
-		getTree func() (root *node)
+		getTree func() (root *bt)
 		want    bool
 	}
 	testCases := []testCase{
-		{"nil", func() *node { return nil }, false},
-		{"has", func() *node {
-			return n(10).
-				l(n(10))
+		{"nil", func() *bt { return nil }, false},
+		{"has", func() *bt {
+			return nbt(10).
+				l(nbt(10))
 		}, true},
-		{"hasn't", func() *node {
-			return n(10).
-				l(n(5))
+		{"hasn't", func() *bt {
+			return nbt(10).
+				l(nbt(5))
 		}, false},
 	}
 	for _, tc := range testCases {
@@ -31,25 +33,25 @@ func TestDublicates(t *testing.T) {
 func TestLevelMax(t *testing.T) {
 	type testCase struct {
 		name    string
-		getTree func() (root *node)
+		getTree func() (root *bt)
 		want    []int
 	}
 	testCases := []testCase{
-		{"nil", func() *node { return nil }, []int{}},
-		{"one level", func() *node {
-			return n(10)
+		{"nil", func() *bt { return nil }, []int{}},
+		{"one level", func() *bt {
+			return nbt(10)
 		}, []int{10}},
-		{"multiple levels", func() *node {
-			return n(10).
-				l(n(3).
-					l(n(8)).
-					r(n(1))).
-				r(n(6))
+		{"multiple levels", func() *bt {
+			return nbt(10).
+				l(nbt(3).
+					l(nbt(8)).
+					r(nbt(1))).
+				r(nbt(6))
 		}, []int{10, 6, 8}},
-		{"dublicates", func() *node {
-			return n(5).
-				l(n(10)).
-				r(n(10))
+		{"dublicates", func() *bt {
+			return nbt(5).
+				l(nbt(10)).
+				r(nbt(10))
 		}, []int{5, 10}},
 	}
 	for _, tc := range testCases {
