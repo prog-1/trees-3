@@ -3,8 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"log"
-	"os"
 	"unicode"
 )
 
@@ -16,16 +14,6 @@ type bt struct {
 func nbt(v int) *bt          { return &bt{v, nil, nil} }
 func (root *bt) l(n *bt) *bt { root.left = n; return root }
 func (root *bt) r(n *bt) *bt { root.right = n; return root }
-
-func main() {
-	f, err := os.Open("main.go")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer f.Close()
-	scanner := bufio.NewScanner(f)
-	print(countWords(scanner))
-}
 
 func hasDublicates(root *bt) bool {
 	contains := func(s []int, val int) bool {
