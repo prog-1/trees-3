@@ -49,12 +49,12 @@ Create a program that uses BST to count words in a file.
 
 > **Note**
 >
-> Use a custom split function. You can get inspired by the [standard split implementation].
-> And feel free to treat every rune for which [unicode.IsLetter] returns $false$ as a separator.
-
-[standard split implementation]: https://cs.opensource.google/go/go/+/refs/tags/go1.19.3:src/strings/strings.go;l=236;drc=e7c56fe9948449a3710b36c22c02d57c215d1c10
-
-[unicode.IsLetter]: https://pkg.go.dev/unicode#IsLetter
+> Use this snippet to split the words:
+>
+> ```go
+> f := func(c rune) bool { return !unicode.IsLetter(c) }
+> words := strings.FieldsFunc("  foo1;bar2,baz3...", f)
+> ```
 
 ## 5. Ingus koeficients
 
