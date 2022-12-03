@@ -49,7 +49,7 @@ Create a program that uses BST to count words in a file.
 
 > **Note**
 >
-> Use this snippet to split the words:
+> Use this snippet to split your input:
 >
 > ```go
 > f := func(c rune) bool { return !unicode.IsLetter(c) }
