@@ -1,10 +1,21 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
+	"io/ioutil"
+	"log"
+	"strings"
 	"unicode"
 )
+
+func main() {
+
+	f, err := ioutil.ReadFile("text.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	print(countWords(f))
+}
 
 type bt struct {
 	val         int
@@ -74,24 +85,15 @@ type bst struct {
 	right, left *bst
 }
 
-func countWords(scanner *bufio.Scanner) *bst {
-	var root *bst
-	getWords(scanner, func(word string) { insert(&root, word) })
-	return root
-}
+func countWords(file []byte) *bst {
+	f := func(c rune) bool { return !unicode.IsLetter(c) }
+	words := strings.FieldsFunc(string(file), f)
 
-func getWords(scanner *bufio.Scanner, sink func(word string)) {
-	scanner.Split(bufio.ScanRunes)
-	var word string
-	for scanner.Scan() {
-		letter := rune(scanner.Text()[0])
-		if !unicode.IsLetter(letter) {
-			sink(word)
-			word = ""
-		} else {
-			word += string(letter)
-		}
+	var root *bst
+	for _, word := range words {
+		insert(&root, word)
 	}
+	return root
 }
 
 func insert(root **bst, in string) {
@@ -112,5 +114,6 @@ func print(root *bst) {
 	}
 	print(root.left)
 	fmt.Println(root.val, ":", root.count)
+	//fmt.Printf("%v:%v", root.val, root.count)
 	print(root.right)
 }

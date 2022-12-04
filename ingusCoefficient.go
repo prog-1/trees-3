@@ -1,19 +1,29 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
-func main() {
-	// fmt.Println(solve(processInput()))
-	c := []int{3, 1, 7, 2, 6, 3}
-	fmt.Println(solve(3, c))
+//func main() {
+// fmt.Println(IngusCoefficient(processInput()))
+// c := []int{3, 1, 7, 2, 6, 3}
+// fmt.Println(IngusCoefficient(3, c))
 
-	// c := []int{7, 6, 5, 4, 3}
-	// fmt.Println(solve(9, c))
+// c := []int{7, 6, 5, 4, 3}
+// fmt.Println(IngusCoefficient(9, c))
 
-	//c := []int{5, 3, 1, 6, 3, 5, 3}
-	//fmt.Println(solve(2, c))
+//c := []int{5, 3, 1, 6, 3, 5, 3}
+//fmt.Println(IngusCoefficient(2, c))
 
-}
+// f, err := os.Open("main.go")
+// if err != nil {
+// 	log.Fatal(err)
+// }
+// defer f.Close()
+// scanner := bufio.NewScanner(f)
+// print(countWords(scanner))
+
+//}
 
 func processInput() (maxDailyTasks int, complexities []int) {
 	var taskCount int
@@ -27,7 +37,7 @@ func processInput() (maxDailyTasks int, complexities []int) {
 
 // mit - maximal inspected tasks(a day)
 // miic - minimal initial Ingus coefficient
-func solve(mit int, complexities []int) (miic, days int) {
+func IngusCoefficient(mit int, complexities []int) (miic, days int) {
 	lowest := func(s []int) int {
 		lowest := s[0]
 		for _, el := range s {
