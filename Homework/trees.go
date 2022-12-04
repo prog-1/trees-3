@@ -11,6 +11,7 @@ func (n *Node) r(r *Node) *Node { n.right = r; return n }
 
 //Trees
 
+//[12,10,5]
 func Tree1() *Node {
 	return n(12).
 		l(n(8).
