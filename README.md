@@ -43,8 +43,20 @@ Example 2:
 Returns [5 7 3]
 ```
 
+## 4. Count Words
 
-## 4. (optional) Ingus koeficients
+Create a program that uses BST to count words in a file.
+
+> **Note**
+>
+> Use this snippet to split your input:
+>
+> ```go
+> f := func(c rune) bool { return !unicode.IsLetter(c) }
+> words := strings.FieldsFunc("  foo1;bar2,baz3...", f)
+> ```
+
+## 5. Ingus koeficients
 
 Ingus koeficients problem as described here https://lio.lv/arhivs/arhivs2/2019_3_d1_uzd.pdf
 
