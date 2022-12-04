@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 	"strings"
@@ -14,20 +13,21 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	print(countWords(f))
+	printTree(countWords(f))
 }
 
-type bt struct {
-	val         int
-	left, right *bt
+type node[T any] struct {
+	val         T
+	count       int
+	left, right *node[T]
 }
 
-func nbt(v int) *bt          { return &bt{v, nil, nil} }
-func (root *bt) l(n *bt) *bt { root.left = n; return root }
-func (root *bt) r(n *bt) *bt { root.right = n; return root }
+func n[T any](v T, count int) *node[T]      { return &node[T]{v, count, nil, nil} }
+func (root *node[T]) l(n *node[T]) *node[T] { root.left = n; return root }
+func (root *node[T]) r(n *node[T]) *node[T] { root.right = n; return root }
 
-func hasDublicates(root *bt) bool {
-	contains := func(s []int, val int) bool {
+func hasDublicates[T comparable](root *node[T]) bool {
+	contains := func(s []T, val T) bool {
 		for _, el := range s {
 			if el == val {
 				return true
@@ -35,9 +35,9 @@ func hasDublicates(root *bt) bool {
 		}
 		return false
 	}
-	var values []int
-	var hd func(*bt) bool
-	hd = func(r *bt) bool {
+	var values []T
+	var hd func(*node[T]) bool
+	hd = func(r *node[T]) bool {
 		if r == nil {
 			return false
 		}
@@ -50,10 +50,10 @@ func hasDublicates(root *bt) bool {
 	return hd(root)
 }
 
-func levelMax(root *bt) []int {
+func levelMax(root *node[int]) []int {
 	var values [][]int
-	var traverse func(*bt, int)
-	traverse = func(root *bt, lvl int) {
+	var traverse func(*node[int], int)
+	traverse = func(root *node[int], lvl int) {
 		if root == nil {
 			return
 		}
@@ -79,26 +79,20 @@ func levelMax(root *bt) []int {
 	return lm
 }
 
-type bst struct {
-	val         string
-	count       int
-	right, left *bst
-}
-
-func countWords(file []byte) *bst {
+func countWords(file []byte) *node[string] {
 	f := func(c rune) bool { return !unicode.IsLetter(c) }
 	words := strings.FieldsFunc(string(file), f)
 
-	var root *bst
+	var root *node[string]
 	for _, word := range words {
 		insert(&root, word)
 	}
 	return root
 }
 
-func insert(root **bst, in string) {
+func insert(root **node[string], in string) {
 	if (*root) == nil {
-		*root = &bst{in, 1, nil, nil}
+		*root = &node[string]{in, 1, nil, nil}
 	} else if in == (*root).val {
 		(*root).count++
 	} else if in < (*root).val {
@@ -106,14 +100,4 @@ func insert(root **bst, in string) {
 	} else /*in > root.val*/ {
 		insert(&(*root).right, in)
 	}
-}
-
-func print(root *bst) {
-	if root == nil {
-		return
-	}
-	print(root.left)
-	fmt.Println(root.val, ":", root.count)
-	//fmt.Printf("%v:%v", root.val, root.count)
-	print(root.right)
 }
