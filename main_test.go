@@ -1,25 +1,42 @@
 package main
 
 import (
+	"io/ioutil"
 	"reflect"
 	"testing"
 )
 
+func treeToSlice[T any](root *node[T]) (values []T, counts []int) {
+	var fillSlice func(*node[T])
+	fillSlice = func(cur *node[T]) {
+		if cur == nil {
+			return
+		}
+		values = append(values, cur.val)
+		counts = append(counts, cur.count)
+
+		fillSlice(cur.left)
+		fillSlice(cur.right)
+	}
+	fillSlice(root)
+	return values, counts
+}
+
 func TestDublicates(t *testing.T) {
 	type testCase struct {
 		name    string
-		getTree func() (root *bt)
+		getTree func() (root *node[int])
 		want    bool
 	}
 	testCases := []testCase{
-		{"nil", func() *bt { return nil }, false},
-		{"has", func() *bt {
-			return nbt(10).
-				l(nbt(10))
+		{"nil", func() *node[int] { return nil }, false},
+		{"has", func() *node[int] {
+			return n(10, 1).
+				l(n(10, 1))
 		}, true},
-		{"hasn't", func() *bt {
-			return nbt(10).
-				l(nbt(5))
+		{"hasn't", func() *node[int] {
+			return n(10, 1).
+				l(n(5, 1))
 		}, false},
 	}
 	for _, tc := range testCases {
@@ -33,31 +50,65 @@ func TestDublicates(t *testing.T) {
 func TestLevelMax(t *testing.T) {
 	type testCase struct {
 		name    string
-		getTree func() (root *bt)
+		getTree func() (root *node[int])
 		want    []int
 	}
 	testCases := []testCase{
-		{"nil", func() *bt { return nil }, []int{}},
-		{"one level", func() *bt {
-			return nbt(10)
+		{"nil", func() *node[int] { return nil }, []int{}},
+		{"one level", func() *node[int] {
+			return n(10, 1)
 		}, []int{10}},
-		{"multiple levels", func() *bt {
-			return nbt(10).
-				l(nbt(3).
-					l(nbt(8)).
-					r(nbt(1))).
-				r(nbt(6))
+		{"multiple levels", func() *node[int] {
+			return n(10, 1).
+				l(n(3, 1).
+					l(n(8, 1)).
+					r(n(1, 1))).
+				r(n(6, 1))
 		}, []int{10, 6, 8}},
-		{"dublicates", func() *bt {
-			return nbt(5).
-				l(nbt(10)).
-				r(nbt(10))
+		{"dublicates", func() *node[int] {
+			return n(5, 1).
+				l(n(10, 1)).
+				r(n(10, 1))
 		}, []int{5, 10}},
 	}
 	for _, tc := range testCases {
 		root := tc.getTree()
 		if got := levelMax(root); !reflect.DeepEqual(got, tc.want) {
 			t.Errorf("got = %v, want = %v", got, tc.want)
+		}
+	}
+}
+
+func TestWordCount(t *testing.T) {
+	for _, tc := range []struct {
+		name     string
+		filename string
+		wantTree func() *node[string]
+	}{
+		{"1", "text.txt", func() *node[string] {
+			return n("Only", 1).
+				l(n("Albert", 1).
+					r(n("Einstein", 1))).
+				r(n("a", 2).
+					r(n("life", 2).
+						l(n("for", 1).
+							r(n("is", 1))).
+						r(n("lived", 1).
+							r(n("others", 1).
+								r(n("worthwhile", 1))))))
+		}},
+	} {
+		file, err := ioutil.ReadFile(tc.filename)
+		if err != nil {
+			panic(err)
+		}
+		gotValues, gotCounts := treeToSlice(countWords(file))
+		wantValues, wantCounts := treeToSlice(tc.wantTree())
+		if !reflect.DeepEqual(gotValues, wantValues) {
+			t.Errorf("Incorrect values: got = %v, want = %v", gotValues, wantValues)
+		}
+		if !reflect.DeepEqual(gotCounts, wantCounts) {
+			t.Errorf("Incorrect counts: got = %v, want = %v", gotCounts, wantCounts)
 		}
 	}
 }
