@@ -71,14 +71,16 @@ func main() {
 		log.Fatal(err)
 	}
 
-	inorderTraversal(BST, resultFile)
+	inorderTraversal(BST, func(v *node) {
+		fmt.Fprintf(resultFile, "%s : %v\n", v.word, v.repeates)
+	})
 }
 
-func inorderTraversal(t *node, file *os.File) {
+func inorderTraversal(t *node, sink func(v *node)) {
 	if t == nil {
 		return
 	}
-	inorderTraversal(t.left, file)
-	file.WriteString(fmt.Sprintf("%s : %v\n", t.word, t.repeates))
-	inorderTraversal(t.right, file)
+	inorderTraversal(t.left, sink)
+	sink(t)
+	inorderTraversal(t.right, sink)
 }
