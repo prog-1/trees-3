@@ -49,18 +49,22 @@ func insert(t *node, v []byte) *node {
 	return t
 }
 
+func createBSTFromString(t []byte) (BST *node) {
+	t = bytes.ToLower(t)
+	f := func(c rune) bool { return !unicode.IsLetter(c) }
+	words := bytes.FieldsFunc(t, f)
+	for _, v := range words {
+		BST = insert(BST, v)
+	}
+	return
+}
+
 func main() {
-	var BST *node
 	file, err := os.ReadFile("text.txt")
 	if err != nil {
 		panic(err)
 	}
-	file = bytes.ToLower(file)
-	f := func(c rune) bool { return !unicode.IsLetter(c) }
-	words := bytes.FieldsFunc(file, f)
-	for _, v := range words {
-		BST = insert(BST, v)
-	}
+	BST := createBSTFromString(file)
 	resultFile, err := os.Create("data.txt")
 
 	if err != nil {
