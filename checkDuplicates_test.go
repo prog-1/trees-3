@@ -1,6 +1,8 @@
 package main
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestCheckDuplicates(t *testing.T) {
 	for _, tc := range []struct {

@@ -9,6 +9,9 @@ func n(v int) *Node             { return &Node{val: v} }
 func (n *Node) l(l *Node) *Node { n.left = l; return n }
 func (n *Node) r(r *Node) *Node { n.right = r; return n }
 
+
+
+
 //Trees
 
 //[12,10,5]
