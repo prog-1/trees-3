@@ -26,7 +26,10 @@ func removeMin(t **node) {
 	}
 	for ; i.left.left != nil; i = i.left {
 	}
-	i.left = nil
+	i.left = i.left.right
+	if i.left != nil {
+		i.left.right = nil
+	}
 }
 
 func Insert(t **node, val int) {
@@ -38,7 +41,7 @@ func Insert(t **node, val int) {
 		}
 	}
 	*t = &node{val: val}
-	return
+
 }
 
 func main() {
@@ -66,6 +69,7 @@ func findIngusCofficent(tasks []int, tasksPerDay int) int {
 		Insert(&BST, tasks[i])
 	}
 	for BST != nil {
+
 		if d := BST.min() - ik; d > 0 {
 			startIK += d
 			ik += d
