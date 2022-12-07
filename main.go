@@ -44,6 +44,7 @@ func ik(r io.Reader) (int, int) {
 			if ik >= minValued(dailyEx).v {
 				ik++
 				dailyEx = Delete(dailyEx, minValued(dailyEx).v)
+				tasksLeftForDay--
 			}
 			return minIk, 1
 
