@@ -13,7 +13,7 @@ type node struct {
 }
 
 func ik(r io.Reader) (int, int) {
-	var n, m, days int
+	var n, m, days, minIk int
 	fmt.Fscan(r, &n, &m)
 	allEx := make([]int, n)
 	for i := 0; i < n; i++ {
@@ -22,6 +22,45 @@ func ik(r io.Reader) (int, int) {
 	fmt.Println(n, m, allEx)
 	var dailyEx *node
 	ik := 1
+	var currTask int
+	tasksLeftForDay := m
+	for nodeCount(dailyEx) < m {
+		for ; currTask < m; currTask++ {
+			insertIntoBST(dailyEx, allEx[currTask])
+		}
+	}
+	if minIk <= minValued(dailyEx).v {
+		minIk = minValued(dailyEx).v
+	} else {
+		ik++
+		dailyEx = Delete(dailyEx, minValued(dailyEx).v)
+		tasksLeftForDay--
+	}
+	for i := m - 1; i != n-1; i++ {
+		for tasksLeftForDay != 0 {
+			if nodeCount(dailyEx) < m {
+				insertIntoBST(dailyEx, allEx[currTask])
+			}
+			if ik >= minValued(dailyEx).v {
+				ik++
+				dailyEx = Delete(dailyEx, minValued(dailyEx).v)
+			}
+			return minIk, 1
+
+		}
+		days++
+		tasksLeftForDay = m
+	}
+	return ik, days
+}
+
+func main() {
+	r := bufio.NewReader(os.Stdin)
+	a, b := ik(r)
+	fmt.Println(a, b)
+}
+
+/*
 	for _, i := range allEx {
 		if nodeCount(dailyEx) < m {
 			insertIntoBST(dailyEx, allEx[i])
@@ -38,17 +77,9 @@ func ik(r io.Reader) (int, int) {
 		}
 	}
 
-	ik = minValued(dailyEx).v
-	days = 1
-	return ik, days
-}
-
-func main() {
-	r := bufio.NewReader(os.Stdin)
-	a, b := ik(r)
-	fmt.Println(a, b)
-}
-
+ik = minValued(dailyEx).v
+days = 1
+*/
 func insertIntoBST(root *node, val int) *node {
 	if root == nil {
 		return &node{val, nil, nil}
