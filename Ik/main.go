@@ -61,7 +61,8 @@ func main() {
 	if tasksPerDay > taskNum {
 		tasksPerDay = taskNum
 	}
-	fmt.Println(findIngusCofficent(tasks, tasksPerDay))
+	IK := findIngusCofficent(tasks, tasksPerDay)
+	fmt.Println(IK, calculateDays(IK, tasks, tasksPerDay))
 }
 
 func findIngusCofficent(tasks []int, tasksPerDay int) int {
@@ -72,7 +73,7 @@ func findIngusCofficent(tasks []int, tasksPerDay int) int {
 	}
 	for BST != nil {
 		if ik < BST.min() {
-			fmt.Println(BST.min(), ik, BST.min()-ik)
+			//fmt.Println(BST.min(), ik, BST.min()-ik)
 			startIK += BST.min() - ik
 			ik += BST.min() - ik
 		}
@@ -84,4 +85,35 @@ func findIngusCofficent(tasks []int, tasksPerDay int) int {
 		ik++
 	}
 	return startIK
+}
+
+func calculateDays(cofficent int, tasks []int, tasksPerDay int) int {
+
+	//Init
+	var day, i int
+	var BST *node
+	var removed int
+	for ; i < tasksPerDay; i++ {
+		Insert(&BST, tasks[i])
+	}
+	// Solve
+	for i < len(tasks) {
+		if BST == nil || BST.min() > cofficent {
+			day++
+			addNewTasks(&i, tasks, &removed, &BST)
+			continue
+		}
+		removeMin(&BST)
+		cofficent++
+		removed++
+	}
+
+	return day + 1
+}
+
+func addNewTasks(i *int, tasks []int, removed *int, BST **node) {
+	for ; *removed != 0 && *i < len(tasks); *removed-- {
+		Insert(BST, tasks[*i])
+		*i++
+	}
 }
