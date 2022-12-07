@@ -10,28 +10,30 @@ import (
 
 func MinIK(uzd []int, m int) int {
 	var win *bst.Node
-	for i := 0; i < m && len(uzd) != 0; i++ {
-		win = win.Insert(uzd[0])
-		uzd = uzd[1:]
-	}
 	minIk := 1
 	ik := minIk
+
 	for len(uzd) > 0 || win != nil {
-		min := win.FindMin()
-		if min <= ik {
-			win = win.DeleteNode(min)
-			ik++
-
-			if len(uzd) > 0 {
-				win = win.Insert(uzd[0])
-				uzd = uzd[1:]
-			}
-
-			continue
+		for win.NodeCount() < m && len(uzd) > 0 {
+			win = win.Insert(uzd[0])
+			uzd = uzd[1:]
 		}
-		minIk += (min - ik)
-		ik += (min - ik)
-
+		change := false
+		for i := m; i > 0 && win != nil; i-- {
+			min := win.FindMin()
+			// fmt.Println(min, ik, "             ", days)
+			if min <= ik {
+				win = win.DeleteNode(min)
+				ik++
+				change = true
+				continue
+			}
+			if !change {
+				minIk += (min - ik)
+				ik += (min - ik)
+			}
+			break
+		}
 	}
 	return minIk
 }
@@ -57,6 +59,7 @@ func MinDays(uzd []int, m, ik int) {
 			break
 		}
 	}
+
 	fmt.Println(ikk, days)
 }
 func main() {
