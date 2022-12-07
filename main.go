@@ -1,19 +1,12 @@
 package main
 
 import (
-	"io/ioutil"
-	"log"
-	"strings"
-	"unicode"
+	"fmt"
 )
 
 func main() {
-
-	f, err := ioutil.ReadFile("text.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-	printTree(countWords(f))
+	//fmt.Println(IngusCoefficient(processInput()))
+	fmt.Println(IngusCoefficient(3, []int{3, 1, 7, 2, 6, 3}))
 }
 
 type node[T any] struct {
@@ -22,77 +15,9 @@ type node[T any] struct {
 	left, right *node[T]
 }
 
-func n[T any](v T, count int) *node[T]      { return &node[T]{v, count, nil, nil} }
-func (root *node[T]) l(n *node[T]) *node[T] { root.left = n; return root }
-func (root *node[T]) r(n *node[T]) *node[T] { root.right = n; return root }
-
-func hasDublicates[T comparable](root *node[T]) bool {
-	contains := func(s []T, val T) bool {
-		for _, el := range s {
-			if el == val {
-				return true
-			}
-		}
-		return false
-	}
-	var values []T
-	var hd func(*node[T]) bool
-	hd = func(r *node[T]) bool {
-		if r == nil {
-			return false
-		}
-		if contains(values, r.val) {
-			return true
-		}
-		values = append(values, r.val)
-		return hd(r.left) || hd(r.right)
-	}
-	return hd(root)
-}
-
-func levelMax(root *node[int]) []int {
-	var values [][]int
-	var traverse func(*node[int], int)
-	traverse = func(root *node[int], lvl int) {
-		if root == nil {
-			return
-		}
-		if len(values) <= lvl {
-			tmp := make([]int, 1)
-			values = append(values, tmp)
-		}
-		values[lvl] = append(values[lvl], root.val)
-		traverse(root.left, lvl+1)
-		traverse(root.right, lvl+1)
-	}
-	traverse(root, 0)
-
-	lm := make([]int, len(values))
-	for i, lvl := range values {
-		for _, val := range lvl {
-			if lm[i] < val {
-				lm[i] = val
-			}
-		}
-	}
-
-	return lm
-}
-
-func countWords(file []byte) *node[string] {
-	f := func(c rune) bool { return !unicode.IsLetter(c) }
-	words := strings.FieldsFunc(string(file), f)
-
-	var root *node[string]
-	for _, word := range words {
-		insert(&root, word)
-	}
-	return root
-}
-
-func insert(root **node[string], in string) {
+func insert[T int](root **node[T], in T) {
 	if (*root) == nil {
-		*root = &node[string]{in, 1, nil, nil}
+		*root = &node[T]{in, 1, nil, nil}
 	} else if in == (*root).val {
 		(*root).count++
 	} else if in < (*root).val {
@@ -100,4 +25,62 @@ func insert(root **node[string], in string) {
 	} else /*in > root.val*/ {
 		insert(&(*root).right, in)
 	}
+}
+
+func processInput() (m int, tasks []int) {
+	var taskCount int
+	fmt.Scanln(&taskCount, &m)
+	tasks = make([]int, taskCount)
+	for i := range tasks {
+		fmt.Scan(&tasks[i])
+	}
+	return m, tasks
+}
+
+func (root *node[T]) lowest() *node[T] {
+	if root == nil {
+		return nil
+	}
+	for root.left != nil {
+		root = root.left
+	}
+	return root
+}
+
+func IngusCoefficient(m int, compl []int) (minIC, days int) {
+	// Returns index of the smallest element
+	smallest := func(i, j int) int {
+		l := i
+		for k := i + 1; k < j; k++ {
+			if compl[k] < compl[l] {
+				l = k
+			}
+		}
+		return l
+	}
+	// Calculate minimal Ingus coeffecient
+	// Take first m elements
+	// Find lowest
+	// minIK = lowest
+	// if lowest <= cur then delete lowest and cur++ break
+	// else /*lowest > cur*/ then minIK = minIK + (lowest-cur) and cur = lowest + 1
+	// Delete lowest
+	// take one more element
+	tasks := compl
+	curIC := minIC
+	for i, j := 0, m; i < len(tasks); i, j = i+1, j+1 {
+		if j > len(tasks) {
+			j = len(tasks)
+		}
+		l := smallest(i, j)
+		if tasks[l] > curIC {
+			minIC = minIC + (tasks[l] - curIC)
+			curIC = tasks[l]
+		}
+		curIC++
+		tasks[i], tasks[l] = tasks[l], tasks[i]
+
+	}
+
+	return minIC, 0
 }
