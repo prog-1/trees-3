@@ -8,7 +8,7 @@ import (
 	"github.com/Sp0ozy/bst"
 )
 
-func MinIK(uzd []int, m int) {
+func MinIK(uzd []int, m int) int {
 	var win *bst.Node
 	for i := 0; i < m && len(uzd) != 0; i++ {
 		win = win.Insert(uzd[0])
@@ -33,23 +33,31 @@ func MinIK(uzd []int, m int) {
 		ik += (min - ik)
 
 	}
-	fmt.Println(minIk)
+	return minIk
 }
 func MinDays(uzd []int, m, ik int) {
 	var win *bst.Node
-	for i := 0; i < m && len(uzd) != 0; i++ {
-		win = win.Insert(uzd[0])
-		uzd = uzd[1:]
-	}
-	for days:=1;len(uzd) > 0 || win != nil; {
-		for win != nil{
+	ikk := ik
+	days := 0
+	for len(uzd) > 0 || win != nil {
+		days++
+		for win.NodeCount() < m && len(uzd) > 0 {
+			win = win.Insert(uzd[0])
+			uzd = uzd[1:]
+		}
+		// fmt.Println(win.Left.Val, win.Val)
+		for i := m; i > 0 && win != nil; i-- {
 			min := win.FindMin()
-		if min <= ik {
-			win = win.DeleteNode(min)
-			ik++
+			// fmt.Println(min, ik, "             ", days)
+			if min <= ik {
+				win = win.DeleteNode(min)
+				ik++
+				continue
+			}
+			break
 		}
-		}
-		
+	}
+	fmt.Println(ikk, days)
 }
 func main() {
 	r := bufio.NewReader(os.Stdin)
@@ -61,5 +69,6 @@ func main() {
 	}
 	// fmt.Println(uzd)
 	ik := MinIK(uzd, m)
-
+	// fmt.Println(ik)
+	MinDays(uzd, m, ik)
 }
