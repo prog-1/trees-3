@@ -12,13 +12,10 @@ type node struct {
 }
 
 func (t *node) min() int {
-	if t == nil {
-		return -1
+	for t.left != nil {
+		t = t.left
 	}
-	if t.left == nil {
-		return t.val
-	}
-	return (t.left).min()
+	return t.val
 }
 
 func removeMin(t **node) {
@@ -33,18 +30,15 @@ func removeMin(t **node) {
 }
 
 func Insert(t **node, val int) {
-	if *t == nil {
-		*t = &node{val: val}
-		return
+	for *t != nil {
+		if val <= (*t).val {
+			t = &(*t).left
+		} else {
+			t = &(*t).right
+		}
 	}
-	if val < (*t).val {
-		Insert(&(*t).left, val)
-		return
-	}
-	if val > (*t).val {
-		Insert(&(*t).right, val)
-		return
-	}
+	*t = &node{val: val}
+	return
 }
 
 func main() {
@@ -72,10 +66,9 @@ func findIngusCofficent(tasks []int, tasksPerDay int) int {
 		Insert(&BST, tasks[i])
 	}
 	for BST != nil {
-		if ik < BST.min() {
-			//fmt.Println(BST.min(), ik, BST.min()-ik)
-			startIK += BST.min() - ik
-			ik += BST.min() - ik
+		if d := BST.min() - ik; d > 0 {
+			startIK += d
+			ik += d
 		}
 		removeMin(&BST)
 		if i < len(tasks) {
