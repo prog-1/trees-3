@@ -4,57 +4,70 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"sort"
 )
 
-func solutions(ik int, lowlvlex []int) bool {
+func solutions(ik, experday int, lowlvlex, ex []int) (bool, []int, int) {
+	// fmt.Println(ik, lowlvlex, ex)
 	for len(lowlvlex) > 0 {
-		if lowlvlex[0] > ik {
-			return false
+		if lowlvlex[0] > ik && len(lowlvlex) == experday {
+			return false, lowlvlex, ik
+		} else if lowlvlex[0] > ik && len(ex) == 0 {
+			return false, lowlvlex, ik
+		} else if lowlvlex[0] > ik {
+			return true, lowlvlex, ik
 		}
-		// lowlvlex = append(lowlvlex[:0], lowlvlex[1:]...)
 		lowlvlex = lowlvlex[1:]
 		ik++
 	}
-	return true
+	return true, lowlvlex, ik
 }
 
-func find(experday int, ex []int) ([]int, []int) {
-	var lowlvlex []int
-	for a := 0; a < experday && len(ex) > 0; a++ {
-		min := ex[0]
-		mini := 0
-		for i, j := range ex {
-			if min > j {
-				min = j
-				mini = i
-			}
-		}
-		lowlvlex = append(lowlvlex, min)
-		ex = append(ex[:mini], ex[mini+1:]...)
-		fmt.Println(lowlvlex, ex)
+func find(experday int, ex, lowlvlex []int) ([]int, []int) {
+	if len(lowlvlex) == 0 && len(ex) >= experday {
+		lowlvlex = ex[:experday]
+		ex = ex[experday:]
 	}
+	for len(lowlvlex) < experday && len(ex) > 0 {
+		lowlvlex = append(lowlvlex, ex[0])
+		ex = ex[1:]
+	}
+	sort.Ints(lowlvlex)
 	return ex, lowlvlex
 }
 
-func findminIK(experday int, ex []int) int {
-	ik := 1
-	excopy := ex
+func copy(ex, excopy []int) []int {
+	ex = nil
+	ex = append(ex, excopy...)
+	return ex
+}
+
+func findminIK(experday int, ex, excopy []int) (int, int) {
+	ik, dayneed, ikcopy := 1, 0, 1
+	var lowlvlex []int
+	var pass bool
 	for {
-		var lowlvlex []int
-		ex, lowlvlex = find(experday, ex)
-		if !solutions(ik, lowlvlex) {
-			ik++
-			ex = excopy
+		// fmt.Println(ex)
+		// fmt.Println(excopy)
+		ex, lowlvlex = find(experday, ex, lowlvlex)
+		pass, lowlvlex, ik = solutions(ik, experday, lowlvlex, ex)
+		dayneed++
+		if !pass {
+			ikcopy++
+			ik = ikcopy
+			ex = copy(ex, excopy)
+			lowlvlex = nil
+			dayneed = 0
 		} else if len(ex) == 0 {
-			return ik
+			return ikcopy, dayneed
 		}
 	}
 }
 
 func main() {
 	r := bufio.NewReader(os.Stdin)
-	var n, experday, dayneed int
-	var ex []int
+	var n, experday int
+	var ex, excopy []int
 	fmt.Println("First two")
 	fmt.Scan(&n, &experday)
 	fmt.Println("Enter ex")
@@ -62,14 +75,13 @@ func main() {
 		var x int
 		fmt.Fscan(r, &x)
 		ex = append(ex, x)
+		excopy = append(excopy, x)
 	}
-	if n/experday == 0 {
-		dayneed = 1
-	} else {
-		dayneed = (n / experday) + (n % experday)
-	}
-	fmt.Println(findminIK(experday, ex), dayneed)
+	fmt.Println(findminIK(experday, ex, excopy))
 }
 
-// 3 7 1 2 6 3
-// fmt.Println("prst1")
+// var ex []int
+// excopy := ex
+// lowlvlex := ex[:3]
+// sort.Ints(lowlvlex)
+// excopy[:3] <- this part of slice is sorted similar to lowlvlex
