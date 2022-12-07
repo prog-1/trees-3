@@ -7,6 +7,7 @@ import (
 func main() {
 	//fmt.Println(IngusCoefficient(processInput()))
 	fmt.Println(IngusCoefficient(3, []int{3, 1, 7, 2, 6, 3}))
+	//fmt.Println(IngusCoefficient(9, []int{7, 6, 5, 4, 3}))
 }
 
 type node[T any] struct {
@@ -15,16 +16,17 @@ type node[T any] struct {
 	left, right *node[T]
 }
 
-func insert[T int](root **node[T], in T) {
-	if (*root) == nil {
-		*root = &node[T]{in, 1, nil, nil}
-	} else if in == (*root).val {
-		(*root).count++
-	} else if in < (*root).val {
-		insert(&(*root).left, in)
-	} else /*in > root.val*/ {
-		insert(&(*root).right, in)
+func insert[T int](t *node[T], val T) *node[T] {
+	p := &t
+	for *p != nil {
+		if val < (*p).val {
+			p = &(*p).left
+		} else {
+			p = &(*p).right
+		}
 	}
+	*p = &node[T]{val: val}
+	return t
 }
 
 func processInput() (m int, tasks []int) {
@@ -37,7 +39,7 @@ func processInput() (m int, tasks []int) {
 	return m, tasks
 }
 
-func (root *node[T]) lowest() *node[T] {
+func (root *node[T]) smallest() *node[T] {
 	if root == nil {
 		return nil
 	}
@@ -47,28 +49,57 @@ func (root *node[T]) lowest() *node[T] {
 	return root
 }
 
+func deleteNode(root *node[int], k int) *node[int] {
+	if root == nil {
+		return nil
+	}
+	p := &root
+	for (*p) != nil && k < (*p).val {
+		p = &(*p).left
+	}
+	for (*p) != nil && k > (*p).val {
+		p = &(*p).right
+	}
+	if (*p) == nil {
+		return nil
+	}
+
+	if (*p).left == nil && (*p).right == nil {
+		(*p) = nil
+		return root
+	}
+	if (*p).left != nil && (*p).right == nil {
+		(*p) = (*p).left
+		return root
+	}
+	if (*p).left == nil && (*p).right != nil {
+		(*p) = (*p).right
+		return root
+	}
+
+	sr := &(*p).right // sr - smallest right
+	for (*sr).left != nil {
+		sr = &(*sr).left
+	}
+	(*p).val = (*sr).val
+	(*sr) = nil
+	return root
+}
+
 func IngusCoefficient(m int, compl []int) (minIC, days int) {
+	tasks := make([]int, len(compl))
+	copy(tasks, compl)
 	// Returns index of the smallest element
 	smallest := func(i, j int) int {
 		l := i
 		for k := i + 1; k < j; k++ {
-			if compl[k] < compl[l] {
+			if tasks[k] < tasks[l] {
 				l = k
 			}
 		}
 		return l
 	}
-	// Calculate minimal Ingus coeffecient
-	// Take first m elements
-	// Find lowest
-	// minIK = lowest
-	// if lowest <= cur then delete lowest and cur++ break
-	// else /*lowest > cur*/ then minIK = minIK + (lowest-cur) and cur = lowest + 1
-	// Delete lowest
-	// take one more element
-	tasks := compl
-	curIC := minIC
-	for i, j := 0, m; i < len(tasks); i, j = i+1, j+1 {
+	for i, j, curIC := 0, m, minIC; i < len(tasks); i, j, curIC = i+1, j+1, curIC+1 {
 		if j > len(tasks) {
 			j = len(tasks)
 		}
@@ -77,10 +108,34 @@ func IngusCoefficient(m int, compl []int) (minIC, days int) {
 			minIC = minIC + (tasks[l] - curIC)
 			curIC = tasks[l]
 		}
-		curIC++
 		tasks[i], tasks[l] = tasks[l], tasks[i]
-
 	}
 
-	return minIC, 0
+	// Calculating days:
+	// Increase day count
+	// Insert first m tasks into BST
+	// Remove smallest one
+	// Try to solve next smallest
+	//
+
+	var root *node[int]
+	curIC := minIC
+	var solved int
+	for i, j := 0, m; i < len(compl); i, j = i+solved, j+solved {
+		solved = 0
+		days++
+		if j > len(compl) {
+			j = len(compl)
+		}
+		for k := i; k < j; k++ {
+			root = insert(root, compl[k])
+		}
+		for root != nil && root.smallest().val <= curIC {
+			root = deleteNode(root, root.smallest().val)
+			curIC++
+			solved++
+		}
+	}
+
+	return minIC, days
 }
