@@ -6,7 +6,9 @@ import (
 	"io"
 	"os"
 )
-
+//Todo: add len of BST
+// less recursion
+// avl, red-black, random trees, heaps, push,pop
 type node struct {
 	v           int
 	left, right *node
